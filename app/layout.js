@@ -1,4 +1,4 @@
-import NavBar from "@/components/NavBar";
+import Navigation from "@/components/Navigation";
 import "./globals.css";
 
 export const metadata = {
@@ -9,9 +9,9 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="es" className="h-full antialiased">
-      <body className="flex min-h-full flex-col bg-slate-100 text-slate-900">
-        <div className="flex-1 pb-16">{children}</div>
-        <NavBar />
+      <body className="flex min-h-full flex-col lg:flex-row bg-background text-foreground">
+        <Navigation />
+        <div className="flex-1 overflow-x-hidden">{children}</div>
       </body>
     </html>
   );

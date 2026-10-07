@@ -9,10 +9,11 @@ export default function FormEquipo({ equipo, integrantesLibres, integrantesDelEq
     integrantesDelEquipo ? integrantesDelEquipo.map((i) => i.id) : []
   );
 
-  // Optimist UI para cerrar al completar
-  if (estado.success) {
-    onCerrar();
-  }
+  useEffect(() => {
+    if (estado.success) {
+      onCerrar();
+    }
+  }, [estado.success, onCerrar]);
 
   function toggleIntegrante(id) {
     setSeleccionados((prev) =>
@@ -26,40 +27,40 @@ export default function FormEquipo({ equipo, integrantesLibres, integrantesDelEq
   );
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <form action={accion} className="w-full max-w-sm rounded-xl bg-white p-6 shadow-xl space-y-4 max-h-[90vh] flex flex-col">
-        <h2 className="text-xl font-bold">{equipo ? "Editar equipo" : "Nuevo equipo"}</h2>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-sapphire-900/60 backdrop-blur-sm p-4 animate-fade-in">
+      <form action={accion} className="w-full max-w-sm rounded-3xl bg-white p-6 shadow-2xl space-y-4 max-h-[90vh] flex flex-col animate-slide-up border border-sapphire-100">
+        <h2 className="text-2xl font-extrabold text-sapphire-900">{equipo ? "Editar equipo" : "Nuevo equipo"}</h2>
         
         {equipo && <input type="hidden" name="id" value={equipo.id} />}
         
-        <label className="block space-y-1">
-          <span className="text-sm font-medium">Nombre del equipo</span>
+        <label className="block space-y-1.5">
+          <span className="text-sm font-semibold text-sapphire-800">Nombre del equipo</span>
           <input
             name="nombre"
             defaultValue={equipo?.nombre || ""}
             required
-            className="w-full rounded-lg border border-slate-300 px-3 py-2 focus:border-blue-600 focus:outline-none"
+            className="w-full rounded-xl border border-sapphire-100 bg-sapphire-50/50 px-4 py-3 text-sapphire-900 focus:border-sapphire-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-sapphire-500/20 transition-all"
           />
         </label>
 
-        <div className="flex-1 overflow-y-auto space-y-2 border-y border-slate-100 py-2">
-          <span className="text-sm font-medium">Seleccionar integrantes (2 o 3)</span>
+        <div className="flex-1 overflow-y-auto space-y-2 border-y border-sapphire-100 py-4 custom-scrollbar">
+          <span className="text-sm font-semibold text-sapphire-800">Seleccionar integrantes (2 o 3)</span>
           {integrantesDisponibles.length === 0 ? (
-            <p className="text-sm text-slate-500">No hay integrantes libres.</p>
+            <p className="text-sm text-sapphire-400 mt-2">No hay integrantes libres.</p>
           ) : (
-            <ul className="space-y-2 mt-2">
+            <ul className="space-y-2 mt-3">
               {integrantesDisponibles.map((int) => (
                 <li key={int.id}>
-                  <label className="flex items-center gap-3 rounded p-2 hover:bg-slate-50 cursor-pointer border border-slate-100">
+                  <label className="flex items-center gap-3 rounded-xl p-3 hover:bg-sapphire-50 cursor-pointer border border-sapphire-50 hover:border-sapphire-100 transition-all">
                     <input
                       type="checkbox"
                       name="integrantes"
                       value={int.id}
                       checked={seleccionados.includes(int.id)}
                       onChange={() => toggleIntegrante(int.id)}
-                      className="h-5 w-5 rounded border-slate-300 text-blue-600 focus:ring-blue-600"
+                      className="h-5 w-5 rounded border-sapphire-300 text-sapphire-500 focus:ring-sapphire-500 transition-colors"
                     />
-                    <span>{int.nombre} {int.apellido}</span>
+                    <span className="font-medium text-sapphire-900">{int.nombre} {int.apellido}</span>
                   </label>
                 </li>
               ))}
@@ -67,15 +68,15 @@ export default function FormEquipo({ equipo, integrantesLibres, integrantesDelEq
           )}
         </div>
 
-        {estado.error && <p className="text-sm text-red-600">{estado.error}</p>}
+        {estado.error && <div className="rounded-lg bg-red-50 p-3 text-sm text-red-600 animate-fade-in border border-red-100">{estado.error}</div>}
         
-        <p className="text-sm text-slate-500 text-right">{seleccionados.length} seleccionados</p>
+        <p className="text-sm font-medium text-sapphire-400 text-right">{seleccionados.length} seleccionados</p>
 
         <div className="flex gap-3 pt-2">
-          <button type="button" onClick={onCerrar} className="flex-1 rounded-lg px-4 py-2 font-medium text-slate-600 hover:bg-slate-100">
+          <button type="button" onClick={onCerrar} className="flex-1 rounded-xl px-4 py-3 font-bold text-sapphire-700 hover:bg-sapphire-50 transition-colors">
             Cancelar
           </button>
-          <button disabled={pendiente} className="flex-1 rounded-lg bg-blue-600 px-4 py-2 font-medium text-white disabled:opacity-60">
+          <button disabled={pendiente} className="flex-1 rounded-xl bg-sapphire-500 px-4 py-3 font-bold text-white shadow-lg hover:bg-sapphire-700 hover:shadow-xl focus:ring-4 focus:ring-sapphire-500/30 disabled:opacity-60 transition-all active:scale-95">
             {pendiente ? "Guardando..." : "Guardar"}
           </button>
         </div>
