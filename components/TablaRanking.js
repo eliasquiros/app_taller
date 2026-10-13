@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { LogOut, Trophy, Medal, EyeOff, Eye, Sparkles, Users } from "lucide-react";
+import { LogOut, Trophy, Medal, EyeOff, Eye, Sparkles, Users, User } from "lucide-react";
 import { cerrarSesion } from "@/app/actions/auth";
 import PodioGanadores from "@/components/PodioGanadores";
 
@@ -16,25 +16,49 @@ export default function TablaRanking({ equipos = [], usuario }) {
 
   return (
     <>
-      {/* Encabezado con título y botones de acción */}
+      {/* Encabezado con título, usuario actual y botones de acción */}
       <header className="flex flex-col md:flex-row md:items-center justify-between bg-white p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl shadow-sm border border-sapphire-100/50 gap-4">
-        <div className="flex items-center gap-3">
-          <div className="p-2.5 sm:p-3 rounded-2xl bg-sapphire-50 text-sapphire-600 shrink-0">
-            <Trophy className="w-7 h-7 sm:w-9 sm:h-9" />
-          </div>
-          <div>
-            <h1 className="text-xl sm:text-2xl lg:text-3xl font-extrabold tracking-tight text-sapphire-900">
-              Tabla de Puntuación
-            </h1>
-            <p className="text-xs sm:text-sm text-sapphire-400 mt-0.5">
-              Sigue los resultados en tiempo real
-            </p>
+        {/* Bloque de Título y Nombre de Usuario (visible en móvil y escritorio) */}
+        <div className="flex flex-col gap-1 w-full md:w-auto">
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2.5 sm:gap-3">
+              <div className="p-2 sm:p-3 rounded-2xl bg-sapphire-50 text-sapphire-600 shrink-0">
+                <Trophy className="w-6 h-6 sm:w-9 sm:h-9" />
+              </div>
+              <div>
+                <h1 className="text-xl sm:text-2xl lg:text-3xl font-extrabold tracking-tight text-sapphire-900">
+                  Tabla de Puntuación
+                </h1>
+                <p className="text-xs sm:text-sm text-sapphire-400 mt-0.5">
+                  Sigue los resultados en tiempo real
+                </p>
+              </div>
+            </div>
+
+            {/* Insignia de usuario para móvil (< md) */}
+            {usuario && (
+              <div className="md:hidden flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-sapphire-50 border border-sapphire-200/80 text-sapphire-800 text-xs font-bold shrink-0">
+                <User size={14} className="text-sapphire-500 shrink-0" />
+                <span className="max-w-[110px] truncate">{usuario}</span>
+              </div>
+            )}
           </div>
         </div>
 
-        {/* Barra superior de botones adaptada a móviles y pantallas grandes */}
+        {/* Barra superior de botones adaptada a móviles y computadoras */}
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-2.5 w-full md:w-auto">
+          {/* Insignia de usuario para computadora (>= md) */}
+          {usuario && (
+            <div className="hidden md:flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-sapphire-50 border border-sapphire-200/80 text-sapphire-800 text-sm font-semibold shrink-0">
+              <User size={16} className="text-sapphire-500 shrink-0" />
+              <span>
+                Usuario: <strong className="text-sapphire-900 font-extrabold">{usuario}</strong>
+              </span>
+            </div>
+          )}
+
           {!isOculto ? (
+            /* Modo normal: Botón Ocultar y Botón Salir */
             <div className="flex items-center gap-2 w-full sm:w-auto">
               <button
                 onClick={() => setIsOculto(true)}
@@ -45,47 +69,52 @@ export default function TablaRanking({ equipos = [], usuario }) {
                 <span>Ocultar</span>
               </button>
 
-              <form action={cerrarSesion} className="shrink-0">
+              <form action={cerrarSesion} className="flex-1 sm:flex-initial shrink-0">
                 <button
                   type="submit"
-                  className="flex items-center justify-center gap-1.5 text-xs sm:text-sm font-medium text-sapphire-500 hover:text-sapphire-800 transition-colors bg-sapphire-50 px-3 sm:px-4 py-2.5 rounded-xl hover:bg-sapphire-100"
-                  title={`Salir (${usuario})`}
+                  className="w-full flex items-center justify-center gap-1.5 text-xs sm:text-sm font-medium text-sapphire-600 hover:text-sapphire-900 transition-colors bg-sapphire-50 px-3 sm:px-4 py-2.5 rounded-xl hover:bg-sapphire-100 border border-sapphire-100/80"
+                  title={`Cerrar sesión de ${usuario}`}
                 >
-                  <LogOut size={17} />
-                  <span className="hidden xs:inline">Salir</span>
+                  <LogOut size={16} className="shrink-0" />
+                  <span>Salir ({usuario})</span>
                 </button>
               </form>
             </div>
           ) : (
-            <div className="flex flex-col xs:flex-row items-stretch xs:items-center gap-2 w-full sm:w-auto">
-              <button
-                onClick={() => setIsOculto(false)}
-                className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 text-xs sm:text-sm font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-200/90 px-3.5 py-2.5 rounded-xl transition-all shadow-xs active:scale-95 text-center"
-                title="Volver a mostrar el ranking completo"
-              >
-                <Eye size={17} className="text-slate-600 shrink-0" />
-                <span>Volver a mostrar el ranking</span>
-              </button>
-
+            /* Modo Oculto: Opciones en móvil y computadora */
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
+              {/* Botón de ganadores destacado */}
               <button
                 onClick={() => setMostrarPodio(true)}
-                className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 text-xs sm:text-sm font-bold text-white bg-gradient-to-r from-amber-500 via-amber-600 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 px-4 py-2.5 rounded-xl shadow-md transition-all hover:scale-105 active:scale-95 animate-pulse text-center"
+                className="w-full sm:w-auto flex items-center justify-center gap-1.5 text-xs sm:text-sm font-bold text-white bg-gradient-to-r from-amber-500 via-amber-600 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 px-4 py-2.5 rounded-xl shadow-md transition-all hover:scale-105 active:scale-95 animate-pulse text-center"
                 title="Desplegar la animación del podio de ganadores"
               >
                 <Sparkles size={17} className="text-amber-200 shrink-0" />
                 <span>Mostrar ganadores</span>
               </button>
 
-              <form action={cerrarSesion} className="self-end xs:self-auto shrink-0">
+              {/* Botón Volver y Salir en fila */}
+              <div className="flex items-center gap-2 w-full sm:w-auto">
                 <button
-                  type="submit"
-                  className="flex items-center justify-center gap-1.5 text-xs sm:text-sm font-medium text-sapphire-500 hover:text-sapphire-800 transition-colors bg-sapphire-50 px-3 py-2.5 rounded-xl hover:bg-sapphire-100"
-                  title={`Salir (${usuario})`}
+                  onClick={() => setIsOculto(false)}
+                  className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 text-xs sm:text-sm font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-200/90 px-3.5 py-2.5 rounded-xl transition-all shadow-xs active:scale-95 text-center"
+                  title="Volver a mostrar el ranking completo"
                 >
-                  <LogOut size={17} />
-                  <span className="hidden sm:inline">Salir</span>
+                  <Eye size={17} className="text-slate-600 shrink-0" />
+                  <span>Volver al ranking</span>
                 </button>
-              </form>
+
+                <form action={cerrarSesion} className="flex-1 sm:flex-initial shrink-0">
+                  <button
+                    type="submit"
+                    className="w-full flex items-center justify-center gap-1.5 text-xs sm:text-sm font-medium text-sapphire-600 hover:text-sapphire-900 transition-colors bg-sapphire-50 px-3 sm:px-4 py-2.5 rounded-xl hover:bg-sapphire-100 border border-sapphire-100/80"
+                    title={`Cerrar sesión de ${usuario}`}
+                  >
+                    <LogOut size={16} className="shrink-0" />
+                    <span>Salir ({usuario})</span>
+                  </button>
+                </form>
+              </div>
             </div>
           )}
         </div>
@@ -121,9 +150,7 @@ export default function TablaRanking({ equipos = [], usuario }) {
               ) : (
                 equipos?.map((equipo, idx) => {
                   const isTop3 = equipo.puesto <= 3;
-                  // Ancho dinámico simulado para el nombre del equipo
                   const skeletonWidthNombre = Math.min(220, Math.max(120, (((idx + 1) * 53) % 110) + 110));
-                  // Ancho dinámico simulado para los integrantes
                   const skeletonWidthIntegrantes = Math.min(180, Math.max(100, (((idx + 1) * 37) % 90) + 90));
 
                   return (
@@ -150,7 +177,7 @@ export default function TablaRanking({ equipos = [], usuario }) {
                         </div>
                       </td>
 
-                      {/* Nombre del equipo e Integrantes (o Skeleton View sin texto extra) */}
+                      {/* Nombre del equipo e Integrantes (o Skeleton View) */}
                       <td className="px-2.5 sm:px-6 lg:px-8 py-3 sm:py-4 lg:py-5">
                         {isOculto ? (
                           <div className="space-y-1.5 py-1">
